@@ -9,6 +9,7 @@ class App extends Component {
 
   onDragEnd = result => {
     // reorder our column
+    console.log('result', result)
     const {destination, source, draggableId} = result;
     //if there is no destination, do nothing
     if(!destination) {
@@ -21,11 +22,34 @@ class App extends Component {
         return;
     }
 
-    const column = this.state.columns(source.droppablId || 'column-1');
+    const column = this.state.columns[source.droppableId];
+    
 
     //Array.from makes a copy of the array, so we don't mutate state
     const newTaskIds = Array.from(column.taskIds)
+    //Remove 1 item from array at source index
+    newTaskIds.splice(source.index, 1);
+    //Add 1 item to array starting at destination index, putting in draggableId, the specific item
+    newTaskIds.splice(destination.index, 0, draggableId);
 
+    console.log('NEW tASK ARRAY', newTaskIds)
+
+    const newColumn = {
+        ...column,
+        taskIds: newTaskIds
+    }
+
+    const newState = {
+        ...this.state,
+        columns: {
+            ...this.state.columns,
+            [newColumn.id]: newColumn
+        }
+    }
+
+    console.log('newstate', newState)
+
+    this.setState(newState)
   }
 
   render() {
